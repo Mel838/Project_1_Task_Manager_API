@@ -26,3 +26,9 @@ step 4: Setting up packages for API protection
 step 5:  Setting up custom error handlers:
          - installing winston
          - creating a centralized error handling mechanism that logs errors and provides appropriate responses to the client using winston
+         - defining appError class and errorHandler middleware 
+step 6:  setting up the database:
+         - installing postgresql
+         - installing nodemon for development
+         - installing dotenv to better manage the env file. adding 'config' object containing default port and log level
+         - add to .env file the variables for port and log level

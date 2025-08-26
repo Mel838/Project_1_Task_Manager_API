@@ -1,6 +1,7 @@
 import winston from "winston";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { config } from "../config/env.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,8 +11,7 @@ const logDir = path.join(__dirname, "../logs");
 
 // Create and export the logger instance
 export const logger = winston.createLogger({
-  // Minimum level of messages to log. "debug" logs everything from debug and above (info, warn, error).
-  level: "debug",
+  level: config.logging.level,
 
   // Define how the log messages should be formatted
   format: winston.format.combine(
