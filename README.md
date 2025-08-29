@@ -37,4 +37,5 @@ step 6:  setting up the database:
 step 7:  Setting up user authentification and tokens
          - installing bcryptjs, http-errors, jsonwebtoken
          - adding authentification middleware, controller and services
-step 8: 
+step 8:  Setting up task controllers and services 
+         - create, delete, update, list, mark item as completed
