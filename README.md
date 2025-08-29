@@ -40,4 +40,6 @@ step 7:  Setting up user authentification and tokens
 step 8:  Setting up task controllers and services 
          - create, delete, update, list, mark item as completed
 step 9:  setting up user validation ?
-step 10: 
+step 10: setting up rate limiter
+step 11: setting up routes
+step 12: testing and debugging

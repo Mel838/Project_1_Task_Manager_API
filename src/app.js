@@ -1,26 +1,57 @@
-import createError from 'node:http'
+import createError from 'http-errors';
 import express from 'express';
-import cookieParser from 'cookieParser';
-import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import indexRouter from './routes/index';
-import usersRouter from './routes/users';
+// Import routes
+import indexRouter from './routes/index.js';
+import authRouter from './routes/auth.js';
+import tasksRouter from './routes/tasks.js';
+
+// Import middleware and utilities
+import { errorHandler } from './middleware/errorHandler.js';
+import { createRateLimiter } from './middleware/ratelimit.js';
+import { initializeDatabase } from './utils/database.js';
+import { logger } from './utils/logger.js';
+import { config } from './config/env.js';
 
 const app = express();
 
-app.use(logger('dev'));
-app.use(express.json());
+// Initialize database
+initializeDatabase().catch(err => {
+  logger.error('Failed to initialize database:', err);
+  process.exit(1);
+});
+
+// Security middleware
+app.use(helmet());
+app.use(cors({
+  origin: ["http://localhost:3000", "https://frontendapp.vercel.app"],
+  credentials: true
+}));
+
+// Rate limiting
+app.use(createRateLimiter(app));
+
+// General middleware
+app.use(morgan('combined'));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(helmet());
-app.use(cors({
-  origin: ["http://localhost:3000", "frontendapp.vercel.app"]
-}));
-
+// Routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/tasks', tasksRouter);
 
-export default app;
+// Catch 404 and forward to error handler
+app.all('*', (req, res, next) => {
+  next(createError(404, `Can't find ${req.originalUrl} on this server!`));
+});
+
+// Global error handling middleware
+app.use(errorHandler);
+
+export default app

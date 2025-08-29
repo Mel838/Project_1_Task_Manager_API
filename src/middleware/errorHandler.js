@@ -48,7 +48,6 @@ const handleValidationError = (err) => {
 
 // Centralized error-handling middleware
 export const errorHandler = (err, req, res, next) => {
-  // Create a shallow copy to preserve original error properties
   let error = { ...err };
   error.message = err.message;
 
@@ -57,10 +56,23 @@ export const errorHandler = (err, req, res, next) => {
     ip: req.ip 
   });
 
+  // Handle different types of errors
+  if (err.name === 'JsonWebTokenError') error = handleJWTError();
+  if (err.name === 'TokenExpiredError') error = handleJWTExpiredError();
+  if (err.name === 'ValidationError') error = handleValidationError(err);
+  if (err.code && err.code.startsWith('23')) error = handleDatabaseError(err);
+
   // Respond to the client
   res.status(error.statusCode || 500).json({
     success: false,
     error: error.message || "Internal server error",
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }) // Only show stack trace in development
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack })
   });
+};
+
+// Wrapper for async functions to catch errors automatically
+export const catchAsync = (fn) => {
+  return (req, res, next) => {
+    fn(req, res, next).catch(next);
+  };
 };

@@ -2,12 +2,17 @@ import winston from "winston";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { config } from "../config/env.js";
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define the directory where logs will be stored (../logs relative to current file)
 const logDir = path.join(__dirname, "../logs");
+
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 
 // Create and export the logger instance
 export const logger = winston.createLogger({

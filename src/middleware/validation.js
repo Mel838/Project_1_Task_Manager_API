@@ -84,7 +84,9 @@ export const validate = (schema) => {
     const { error } = schema.validate(req.body, { abortEarly: false });
     
     if (error) {
-      return next(error);
+      const errors = error.details.map(el => el.message);
+      const message = `Invalid input data: ${errors.join('. ')}`;
+      return next(new AppError(message, 400));
     }
     
     next();

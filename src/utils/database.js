@@ -24,6 +24,9 @@ pool.on('error', (err) => {
 // Get a client from the pool (for transactions)
 export const getClient = () => pool.connect();
 
+// Query helper function - executes SQL queries using the pool
+export const query = (text, params) => pool.query(text, params);
+
 
 // Database initialization - create tables if they don't exist
 export const initializeDatabase = async () => {
