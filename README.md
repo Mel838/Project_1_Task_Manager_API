@@ -34,3 +34,7 @@ step 6:  setting up the database:
          - add to .env file the variables for port and log level
          - creating tables for users and tasks in database.js if non existent.
          - connecting to postgresql
+step 7:  Setting up user authentification and tokens
+         - installing bcryptjs, http-errors, jsonwebtoken
+         - adding authentification middleware, controller and services
+step 8: 

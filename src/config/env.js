@@ -13,5 +13,15 @@ export const config = {
     database: process.env.DB_NAME || 'taskmanager',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD
+  },
+
+  // JWT configuration
+  jwt: {
+    secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key',
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  },
+
+  logging: {
+    level: process.env.LOG_LEVEL || "info"
   }
 }
