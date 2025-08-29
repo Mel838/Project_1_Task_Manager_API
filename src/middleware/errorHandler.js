@@ -39,6 +39,12 @@ const handleDatabaseError = (err) => {
 const handleJWTError = () => new AppError('Invalid token. Please log in again!', 401);
 const handleJWTExpiredError = () => new AppError('Your token has expired! Please log in again.', 401);
 
+// Handle validation errors from Joi
+const handleValidationError = (err) => {
+  const errors = err.details.map(el => el.message);
+  const message = `Invalid input data: ${errors.join('. ')}`;
+  return new AppError(message, 400);
+};
 
 // Centralized error-handling middleware
 export const errorHandler = (err, req, res, next) => {

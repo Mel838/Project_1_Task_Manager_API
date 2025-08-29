@@ -39,3 +39,5 @@ step 7:  Setting up user authentification and tokens
          - adding authentification middleware, controller and services
 step 8:  Setting up task controllers and services 
          - create, delete, update, list, mark item as completed
+step 9:  setting up user validation ?
+step 10: 
