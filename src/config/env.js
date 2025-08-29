@@ -21,6 +21,12 @@ export const config = {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   },
 
+  // Rate limiting configuration
+  rateLimiting: {
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW) || 15 * 60 * 1000, // 15 minutes
+    maxRequests: parseInt(process.env.RATE_LIMIT_MAX) || 100 // Max 100 requests per window
+  },
+
   logging: {
     level: process.env.LOG_LEVEL || "info"
   }
