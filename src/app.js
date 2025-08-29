@@ -38,18 +38,13 @@ app.use(createRateLimiter(app));
 // General middleware
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/tasks', tasksRouter);
-
-// Catch 404 and forward to error handler
-app.all('*', (req, res, next) => {
-  next(createError(404, `Can't find ${req.originalUrl} on this server!`));
-});
 
 // Global error handling middleware
 app.use(errorHandler);

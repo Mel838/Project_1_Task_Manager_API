@@ -1,34 +1,36 @@
-import pg from 'pg';
+import pkg from 'pg';
 import { config } from '../config/env.js';
 import { logger } from './logger.js';
 
-const { Pool } = pg;
+const { Pool } = pkg;
 
-// Create PostgreSQL connection pool for better performance
+// Create connection pool
 const pool = new Pool({
   host: config.database.host,
   port: config.database.port,
   database: config.database.database,
   user: config.database.user,
   password: config.database.password,
-  max: 10,                    // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000,   // Close idle clients after 30 seconds
+  max: 20, // Maximum number of clients in the pool
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
 });
 
-// Handle pool errors
-pool.on('error', (err) => {
-  logger.error('Unexpected error on idle client', err);
-  process.exit(-1);
-});
+// Generic query function
+export const query = async (text, params) => {
+  const start = Date.now();
+  try {
+    const res = await pool.query(text, params);
+    const duration = Date.now() - start;
+    logger.info(`Executed query in ${duration}ms`, { query: text });
+    return res;
+  } catch (error) {
+    logger.error('Database query error:', error);
+    throw error;
+  }
+};
 
-// Get a client from the pool (for transactions)
-export const getClient = () => pool.connect();
-
-// Query helper function - executes SQL queries using the pool
-export const query = (text, params) => pool.query(text, params);
-
-
-// Database initialization - create tables if they don't exist
+// Initialize database tables
 export const initializeDatabase = async () => {
   try {
     // Create users table
@@ -36,7 +38,7 @@ export const initializeDatabase = async () => {
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -48,17 +50,34 @@ export const initializeDatabase = async () => {
       CREATE TABLE IF NOT EXISTS tasks (
         id SERIAL PRIMARY KEY,
         title VARCHAR(200) NOT NULL,
-        description TEXT,
-        completed BOOLEAN DEFAULT FALSE,
-        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        description TEXT DEFAULT '',
+        completed BOOLEAN DEFAULT false,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
+    // Create indexes for better performance
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id)
+    `);
+
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(completed)
+    `);
+
     logger.info('Database tables initialized successfully');
-  } catch (err) {
-    logger.error('Database initialization failed:', err);
-    throw err;
+  } catch (error) {
+    logger.error('Database initialization failed:', error);
+    throw error;
   }
 };
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  logger.info('Closing database connection pool...');
+  pool.end();
+});
+
+export default pool;
