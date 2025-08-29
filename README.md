@@ -32,3 +32,5 @@ step 6:  setting up the database:
          - installing nodemon for development
          - installing dotenv to better manage the env file. adding 'config' object containing default port and log level
          - add to .env file the variables for port and log level
+         - creating tables for users and tasks in database.js if non existent.
+         - connecting to postgresql
