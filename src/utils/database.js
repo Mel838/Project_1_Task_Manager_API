@@ -58,15 +58,6 @@ export const initializeDatabase = async () => {
       )
     `);
 
-    // Create indexes for better performance
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id)
-    `);
-
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(completed)
-    `);
-
     logger.info('Database tables initialized successfully');
   } catch (error) {
     logger.error('Database initialization failed:', error);
