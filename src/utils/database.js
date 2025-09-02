@@ -11,9 +11,9 @@ const pool = new Pool({
   database: config.database.database,
   user: config.database.user,
   password: config.database.password,
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
 
 // Generic query function
@@ -22,10 +22,10 @@ export const query = async (text, params) => {
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
-    logger.info(`Executed query in ${duration}ms`, { query: text });
+    logger.info(`Query executed in ${duration}ms`);
     return res;
   } catch (error) {
-    logger.error('Database query error:', error);
+    logger.error('Database query error:', error.message);
     throw error;
   }
 };
@@ -33,6 +33,10 @@ export const query = async (text, params) => {
 // Initialize database tables
 export const initializeDatabase = async () => {
   try {
+    // Clean up any existing sequences first
+    await query('DROP SEQUENCE IF EXISTS users_id_seq CASCADE');
+    await query('DROP SEQUENCE IF EXISTS tasks_id_seq CASCADE');
+
     // Create users table
     await query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -58,16 +62,16 @@ export const initializeDatabase = async () => {
       )
     `);
 
-    logger.info('Database tables initialized successfully');
+    logger.info('Database initialized successfully');
   } catch (error) {
-    logger.error('Database initialization failed:', error);
+    logger.error('Database initialization failed:', error.message);
     throw error;
   }
 };
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  logger.info('Closing database connection pool...');
+  logger.info('Closing database...');
   pool.end();
 });
 

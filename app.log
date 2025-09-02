@@ -48,3 +48,17 @@
 {"level":"info","message":"Database tables initialized successfully","service":"taskManager-api","timestamp":"2025-08-30T08:27:15.804Z"}
 {"level":"info","message":"Closing database connection pool...","service":"taskManager-api","timestamp":"2025-08-30T08:27:16.870Z"}
 {"level":"info","message":"Closing database connection pool...","service":"taskManager-api","timestamp":"2025-08-30T08:27:16.995Z"}
+{"level":"info","message":"Query executed in 35ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.113Z"}
+{"level":"info","message":"Query executed in 51ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.117Z"}
+{"level":"info","message":"Query executed in 3ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.119Z"}
+{"level":"info","message":"Query executed in 2ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.120Z"}
+{"level":"info","message":"Query executed in 2ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.121Z"}
+{"level":"info","message":"Query executed in 2ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.122Z"}
+{"level":"info","message":"Query executed in 2ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.123Z"}
+{"level":"info","message":"Database initialized successfully","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.124Z"}
+{"level":"info","message":"Task Manager API running on port 3000","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.126Z"}
+{"level":"info","message":"Environment: development","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.126Z"}
+{"level":"info","message":"Query executed in 5ms","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.127Z"}
+{"level":"info","message":"Database initialized successfully","service":"taskManager-api","timestamp":"2025-09-02T00:10:37.127Z"}
+{"level":"info","message":"Closing database...","service":"taskManager-api","timestamp":"2025-09-02T00:10:41.737Z"}
+{"level":"info","message":"Closing database...","service":"taskManager-api","timestamp":"2025-09-02T00:10:41.827Z"}
