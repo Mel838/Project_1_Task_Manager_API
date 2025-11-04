@@ -1,36 +1,45 @@
 import winston from 'winston';
-import { fileURLToPath } from 'node:url';
-import { EventEmitter } from 'node:events';
+import { config } from '../config/env.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const logDir = path.join(__dirname, "../logs")
+const logFormat = winston.format.combine(
+  winston.format.timestamp(),
+  winston.format.errors({ stack: true }),
+  winston.format.json()
+);
 
 export const logger = winston.createLogger({
-    level: "debug",
+  level: config.logging.level,
+  format: logFormat,
+  defaultMeta: { service: 'taskManager-api' },
+  transports: [
+    // Write all logs with importance level of `error` or less to `error.log`
+    new winston.transports.File({ 
+      filename: 'error.log', 
+      level: 'error',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5
+    }),
+    // Write all logs with importance level of `info` or less to `app.log`
+    new winston.transports.File({ 
+      filename: 'app.log',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5
+    }),
+  ],
+  exceptionHandlers: [
+    new winston.transports.File({ filename: 'exceptions.log' })
+  ],
+  rejectionHandlers: [
+    new winston.transports.File({ filename: 'rejections.log' })
+  ]
+});
+
+// If not in production, log to the console as well
+if (config.nodeEnv !== 'production') {
+  logger.add(new winston.transports.Console({
     format: winston.format.combine(
-        winston.formt.timestamp(),
-        winston.format.errors({stack: true}),
-        winston.format.json()
-    ),
-    defaultMeta: {service: 'todos-api'},
-    transports: [
-        new winston.transports.File({
-            filename: path.join(logDir, "error.log"),
-            level: 'error',
-            maxsize: 5242880
-        })
-    ],
-    exceptionHandlers: [
-        new winston.transports.File({filename: path.join(logDir, 'exceptions.log')})
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({filename: path.join(logDir, 'rejections.log')})
-    ],
-    exitOnError: false 
-})
-
-if (process.env){
-
+      winston.format.colorize(),
+      winston.format.simple()
+    )
+  }));
 }
